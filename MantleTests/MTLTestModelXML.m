@@ -28,8 +28,9 @@
             reversibleTransformerWithForwardBlock:^(DDXMLNode *node) {
                 return @([node stringValue].integerValue);
             }
-            reverseBlock:^(NSNumber *num) {
-                return [DDXMLNode elementWithName:@"count" stringValue:[num stringValue]];
+            reverseBlock:^(NSNumber* num) {
+                return [DDXMLNode elementWithName:@"count"
+                                      stringValue:[num stringValue]];
             }];
 }
 
@@ -39,6 +40,8 @@
     if (!_dateFormatter)
     {
         _dateFormatter = [NSDateFormatter new];
+        [_dateFormatter setDateStyle:NSDateFormatterFullStyle];
+        [_dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     }
     
     return _dateFormatter;
@@ -77,5 +80,29 @@
                 [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
                 return [DDXMLNode elementWithName:@"date" stringValue:[formatter stringFromDate:date] ];
             }];
+}
+
+- (DDXMLElement *)serializeToXMLElement
+{
+    DDXMLElement* root = [[DDXMLElement alloc] initWithName:@"TestModel"];
+    [root addChild:[[DDXMLElement alloc] initWithName:@"name" stringValue:self.name]];
+    
+    DDXMLElement* userIdNode = [[DDXMLElement alloc] initWithName:@"userId" stringValue:self.userName];
+    [userIdNode addAttributeWithName:@"password" stringValue:self.password];
+    [root addChild:userIdNode];
+    
+    NSValueTransformer* countTransformer = [MTLTestModelXML countXMLTransformer];
+    [root addChild:[countTransformer reverseTransformedValue:[NSNumber numberWithInteger:self.count]]];
+    
+    DDXMLElement* nestedNode = [[DDXMLElement alloc] initWithName:@"nested"];
+    
+    NSValueTransformer *dateTransformer = [MTLTestModelXML dateXMLTransformer];
+    DDXMLElement* dateNode = [dateTransformer reverseTransformedValue:self.date];
+    [dateNode addAttributeWithName:@"locale" stringValue:@"en_US_POSIX"];
+    [nestedNode addChild:dateNode];
+     
+    [root addChild:nestedNode];
+    
+    return root;
 }
 @end

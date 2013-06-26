@@ -15,4 +15,7 @@
 @property (nonatomic, copy) NSString *password;
 @property (nonatomic, assign) NSUInteger count;
 @property (nonatomic, copy) NSDate* date;
+
+- (DDXMLElement *)serializeToXMLElement;
+
 @end

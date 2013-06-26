@@ -11,6 +11,7 @@
 #import "MTLReflection.h"
 #import "DDXMLNode.h"
 #import "NSString+DDXML.h"
+#import "MTLValueTransformer.h"
 
 NSString * const MTLXMLAdapterErrorDomain = @"MTLXMLAdapterErrorDomain";
 const NSInteger MTLXMLAdapterErrorNoClassFound = 2;
@@ -30,6 +31,18 @@ static NSString * const MTLXMLAdapterThrownExceptionErrorKey = @"MTLXMLAdapterTh
 
 
 @implementation MTLXMLAdapter
+
++ (id)modelOfClass:(Class)modelClass fromXMLNode:(DDXMLNode *)xmlNode error:(NSError **)error
+{
+	MTLXMLAdapter *adapter = [[self alloc] initWithXMLNode:xmlNode modelClass:modelClass error:error];
+	return adapter.model;
+}
+
++ (DDXMLElement *)XMLElementFromModel:(MTLModel<MTLXMLSerializing> *)model
+{
+	MTLXMLAdapter *adapter = [[self alloc] initWithModel:model];
+	return [adapter XMLElement];
+}
 
 - (id)initWithXMLNode:(DDXMLNode*)xmlNode modelClass:(Class)modelClass error:(NSError **)error
 {
@@ -120,6 +133,19 @@ static NSString * const MTLXMLAdapterThrownExceptionErrorKey = @"MTLXMLAdapterTh
     return self;
 }
 
+- (id)initWithModel:(MTLModel<MTLXMLSerializing> *)model {
+	NSParameterAssert(model != nil);
+    
+	self = [super init];
+	if (self == nil) return nil;
+    
+	_model = model;
+	_modelClass = model.class;
+	_XMLKeyPathsByPropertyKey = [[model.class XMLKeyPathsByPropertyKey] copy];
+    
+	return self;
+}
+
 - (NSString *)XMLKeyPathForKey:(NSString *)key {
 	NSParameterAssert(key != nil); 
     
@@ -132,6 +158,17 @@ static NSString * const MTLXMLAdapterThrownExceptionErrorKey = @"MTLXMLAdapterTh
 		return keyPath;
 	}
 }
+
+- (DDXMLElement *)XMLElement
+{
+    // completely abdicate responsibility and assume each model object serializes itself to proper html
+	if ([self.model respondsToSelector:@selector(serializeToXMLElement)]) {
+		return [self.model serializeToXMLElement];
+    }
+    
+    return nil;
+}
+
 
 - (NSValueTransformer*)XMLTransformerForKey:(NSString*)key
 {

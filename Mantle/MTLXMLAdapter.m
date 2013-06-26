@@ -86,8 +86,7 @@ static NSString * const MTLXMLAdapterThrownExceptionErrorKey = @"MTLXMLAdapterTh
 		if (keyPath == nil) continue;
         keyPath = [[modelClass XPathPrefix] stringByAppendingString:keyPath];
 
-        NSError* error;
-		NSArray* nodes = [xmlNode nodesForXPath:keyPath error:&error];
+		NSArray* nodes = [xmlNode nodesForXPath:keyPath error:error];
         if (nodes == nil || [nodes count] == 0) continue;
         
 

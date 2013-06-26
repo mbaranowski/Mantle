@@ -115,10 +115,10 @@ static NSString * const MTLXMLAdapterThrownExceptionErrorKey = @"MTLXMLAdapterTh
 				NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: ex.description,
                                NSLocalizedFailureReasonErrorKey: ex.reason,
-                               MTLJSONAdapterThrownExceptionErrorKey: ex
+                               MTLXMLAdapterThrownExceptionErrorKey: ex
                                };
                 
-				*error = [NSError errorWithDomain:MTLJSONAdapterErrorDomain code:MTLJSONAdapterErrorExceptionThrown userInfo:userInfo];
+				*error = [NSError errorWithDomain:MTLXMLAdapterErrorDomain code:MTLXMLAdapterErrorExceptionThrown userInfo:userInfo];
 			}
             
 			return nil;

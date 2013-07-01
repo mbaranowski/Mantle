@@ -8,8 +8,17 @@
 
 #import "MTLTestModelXML.h"
 #import "DDXMLElementAdditions.h"
-
+#import "NSValueTransformer+MTLXMLTransformerAdditions.h"
 #import "DDXML.h"
+
+@implementation MTLTestElementXML
++ (NSString*)XPathPrefix {
+    return @"self::element/";
+}
++ (NSDictionary *)XMLKeyPathsByPropertyKey {
+	return @{ @"value": @"text()" };
+}
+@end
 
 @implementation MTLTestModelXML
 
@@ -19,67 +28,26 @@
 + (NSDictionary *)XMLKeyPathsByPropertyKey {
 	return @{ @"userName": @"userId",
               @"date": @"nested/date",
-              @"password": @"userId/@password"
+              @"password": @"userId/@password",
+              @"arrayOfStrings1": @"arrayOfStrings1/element",
+              @"arrayOfStrings2": @"element"        
            };
 }
 
 + (NSValueTransformer *)countXMLTransformer {
-	return [MTLValueTransformer
-            reversibleTransformerWithForwardBlock:^(DDXMLNode *node) {
-                return @([node stringValue].integerValue);
-            }
-            reverseBlock:^(NSNumber* num) {
-                return [DDXMLNode elementWithName:@"count"
-                                      stringValue:[num stringValue]];
-            }];
-}
-
-+ (NSDateFormatter *)dateFormatter
-{
-    static NSDateFormatter* _dateFormatter;
-    if (!_dateFormatter)
-    {
-        _dateFormatter = [NSDateFormatter new];
-        [_dateFormatter setDateStyle:NSDateFormatterFullStyle];
-        [_dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-    }
-    
-    return _dateFormatter;
+	return [MTLValueTransformer mtl_XMLTransformerForInteger];
 }
 
 + (NSValueTransformer *)dateXMLTransformer {
-	return [MTLValueTransformer
-            reversibleTransformerWithForwardBlock:^id(DDXMLNode *node) {
-                
-                NSDateFormatter* formatter = [MTLTestModelXML dateFormatter];
-                [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
-                
-                NSString* locale = @"en_US_POSIX";
-                if ([node kind] == DDXMLElementKind) {
-                    DDXMLElement* element = (DDXMLElement*)node;
-                    DDXMLNode* node = [element attributeForName:@"locale"];
-                    locale = [node stringValue];
-                }
-                
-                [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:locale]];
-                
-                
-                id myDate;
-                NSError* error;
-                if (![formatter getObjectValue:&myDate
-                                     forString:[node stringValue]
-                                         range:nil
-                                         error:&error]) {
-                    return nil;
-                }
-                
-                return myDate;
-            }
-            reverseBlock:^(NSDate *date) {
-                NSDateFormatter* formatter = [MTLTestModelXML dateFormatter];
-                [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
-                return [DDXMLNode elementWithName:@"date" stringValue:[formatter stringFromDate:date] ];
-            }];
+    return [NSValueTransformer mtl_XMLTransformerForDateWithFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+}
+
++(NSValueTransformer*)arrayOfStrings1XMLTransformer {
+    return [NSValueTransformer mtl_XMLArrayTransformerWithModelClass:[MTLTestElementXML class]];
+}
+
++(NSValueTransformer*)arrayOfStrings2XMLTransformer {
+    return [NSValueTransformer mtl_XMLArrayTransformerWithModelClass:[MTLTestElementXML class]];
 }
 
 - (DDXMLElement *)serializeToXMLElement
@@ -91,13 +59,15 @@
     [userIdNode addAttributeWithName:@"password" stringValue:self.password];
     [root addChild:userIdNode];
     
-    NSValueTransformer* countTransformer = [MTLTestModelXML countXMLTransformer];
-    [root addChild:[countTransformer reverseTransformedValue:[NSNumber numberWithInteger:self.count]]];
+    DDXMLElement* countElement = [DDXMLNode elementWithName:@"count"
+                                               stringValue:[[MTLTestModelXML countXMLTransformer] reverseTransformedValue:@(self.count)]];
+    [root addChild:countElement];
     
     DDXMLElement* nestedNode = [[DDXMLElement alloc] initWithName:@"nested"];
     
     NSValueTransformer *dateTransformer = [MTLTestModelXML dateXMLTransformer];
-    DDXMLElement* dateNode = [dateTransformer reverseTransformedValue:self.date];
+    DDXMLElement* dateNode = [[DDXMLElement alloc] initWithName:@"date"
+                                                    stringValue:[dateTransformer reverseTransformedValue:self.date]];
     [dateNode addAttributeWithName:@"locale" stringValue:@"en_US_POSIX"];
     [nestedNode addChild:dateNode];
      

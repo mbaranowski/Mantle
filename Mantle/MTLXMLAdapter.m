@@ -96,7 +96,7 @@ static NSString * const MTLXMLAdapterThrownExceptionErrorKey = @"MTLXMLAdapterTh
             DDXMLNode* node = nodes[0];
             NSValueTransformer *transformer = [self XMLTransformerForKey:propertyKey];
             if (transformer != nil) {
-                value = [transformer transformedValue:node] ?: NSNull.null;
+                value = [transformer transformedValue:nodes] ?: NSNull.null;
             } else {
                 value = [node stringValue];
             }

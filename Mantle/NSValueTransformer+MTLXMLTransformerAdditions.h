@@ -10,6 +10,10 @@
 
 @interface NSValueTransformer (MTLXMLTransformerAdditions)
 
++ (NSValueTransformer *)mtl_XMLTransformerForInteger;
++ (NSValueTransformer *)mtl_XMLTransformerForURL;
++ (NSValueTransformer *)mtl_XMLTransformerForDateWithFormat:(NSString*)dateFormat;
+
 + (NSValueTransformer *)mtl_XMLTransformerWithModelClass:(Class)modelClass;
 + (NSValueTransformer *)mtl_XMLArrayTransformerWithModelClass:(Class)modelClass;
 + (NSValueTransformer *)mtl_XMLNonUniformObjectArrayTransformerWithModelClass:(Class)modelClass;

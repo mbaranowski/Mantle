@@ -26,7 +26,7 @@ it(@"should serialize to XML", ^{
     
     // create an xml string
     NSString* xmlString = [element prettyXMLString];
-    NSLog(@"xml:\n%@", xmlString);
+    //NSLog(@"xml:\n%@", xmlString);
     
     NSError* error = nil;
     DDXMLDocument* doc = [[DDXMLDocument alloc] initWithXMLString:xmlString options:0 error:&error];
@@ -91,6 +91,46 @@ it(@"should initialize from XML", ^{
                              range:nil
                         error:0];
     expect(model.date).to.equal(myDate);
+});
+
+it(@"should initialize XML arrays", ^{
+    
+    NSString* xmlString = @"<TestModel>\
+    <arrayOfStrings1>\
+        <element>A</element>\
+        <element>B</element>\
+        <element>C</element>\
+        <element>D</element>\
+    </arrayOfStrings1>\
+    <element>D</element>\
+    <element>E</element>\
+    <element>F</element>\
+    <element>G</element>\
+    </TestModel>";
+    
+    NSError *error = nil;
+    DDXMLDocument* doc = [[DDXMLDocument alloc] initWithXMLString:xmlString options:0 error:&error];
+    expect(doc).notTo.beNil();
+    expect(error).to.beNil();
+    
+    MTLXMLAdapter* adapter = [[MTLXMLAdapter alloc] initWithXMLNode:doc
+                                                         modelClass:MTLTestModelXML.class
+                                                              error:&error];
+	expect(adapter).notTo.beNil();
+	expect(error).to.beNil();
+    
+    MTLTestModelXML *model = (id)adapter.model;
+    expect(model.arrayOfStrings1.count).to.equal(4);
+    expect([model.arrayOfStrings1[0] value]).to.equal(@"A");
+    expect([model.arrayOfStrings1[1] value]).to.equal(@"B");
+    expect([model.arrayOfStrings1[2] value]).to.equal(@"C");
+    expect([model.arrayOfStrings1[3] value]).to.equal(@"D");
+
+    expect(model.arrayOfStrings2.count).to.equal(4);
+    expect([model.arrayOfStrings2[0] value]).to.equal(@"D");
+    expect([model.arrayOfStrings2[1] value]).to.equal(@"E");
+    expect([model.arrayOfStrings2[2] value]).to.equal(@"F");
+    expect([model.arrayOfStrings2[3] value]).to.equal(@"G");
 });
 
 SpecEnd

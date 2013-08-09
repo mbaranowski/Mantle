@@ -11,4 +11,5 @@ Pod::Spec.new do |s|
   s.dependency  'KissXML'
   s.dependency  'Mantle'
   s.requires_arc = true
+  s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(SDKROOT)/usr/include/libxml2' }
 end

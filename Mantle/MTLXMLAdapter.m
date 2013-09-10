@@ -78,8 +78,18 @@ static NSString * const MTLXMLAdapterThrownExceptionErrorKey = @"MTLXMLAdapterTh
 	_XMLKeyPathsByPropertyKey = [[modelClass XMLKeyPathsByPropertyKey] copy];
 
     NSSet* propertyKeys = [self.modelClass propertyKeys];
-     
+    
+    // Verify that the root XPath exists.  If it does not then do not return an object.
     NSMutableDictionary *dictionaryValue = [[NSMutableDictionary alloc] initWithCapacity:propertyKeys.count];
+
+    NSString *rootPath = [[modelClass XPathPrefix] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
+    NSArray *nodes = [xmlNode nodesForXPath:rootPath error:error];
+    
+    if (nodes == nil || [nodes count] == 0)
+    {
+        // The root node doesn't exist return nil
+        return nil;
+    }
 
 	for (NSString *propertyKey in [self.modelClass propertyKeys]) {
 		NSString *keyPath = [self XMLKeyPathForKey:propertyKey];

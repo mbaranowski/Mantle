@@ -66,9 +66,16 @@
 
 + (NSValueTransformer *)mtl_XMLTransformerForInteger {
 	return [MTLValueTransformer
-            reversibleTransformerWithForwardBlock:^(NSArray *nodes) {
-                return @([nodes[0] stringValue].integerValue);
-            }
+    reversibleTransformerWithForwardBlock:^ id (NSArray *nodes) {
+                    if ([nodes[0] stringValue] != nil && ![[nodes[0] stringValue] isEqualToString:@""])
+                    {
+                        return @([nodes[0] stringValue].integerValue);
+                    }
+                    else
+                    {
+                        return nil;
+                    }
+           } 
             reverseBlock:^(NSNumber* num) {
                 return [    num stringValue];
             }];

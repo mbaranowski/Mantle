@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "MantleXMLAdapter"
   s.platform     = :ios, "5.0"
-  s.version      = "0.2.2"
+  s.version      = "0.2.5"
   s.summary      = "MantleXMLAdapter adds support to Mantle to create MTLModel objects from xml documents and (optionally) from models into xml documents."
   s.homepage     = "https://github.com/mbaranowski/MantleXMLAdapter"
   s.license      = "MIT"

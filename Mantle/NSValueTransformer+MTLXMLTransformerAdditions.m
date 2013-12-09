@@ -10,13 +10,13 @@
 #import "MTLModel.h"
 #import "MTLValueTransformer.h"
 #import "MTLXMLAdapter.h"
-
+#import "DDXML.h"
 
 @implementation NSValueTransformer (MTLXMLTransformerAdditions)
 
 + (NSDateFormatter *)dateFormatter
 {
-    static NSDateFormatter* _dateFormatter;
+    static NSDateFormatter *_dateFormatter;
     if (!_dateFormatter)
     {
         _dateFormatter = [NSDateFormatter new];
@@ -27,7 +27,7 @@
     return _dateFormatter;
 }
 
-+ (NSValueTransformer *)mtl_XMLTransformerForDateWithFormat:(NSString*)dateFormat {
++ (NSValueTransformer *)mtl_XMLTransformerForDateWithFormat:(NSString *)dateFormat {
 	return [MTLValueTransformer
             reversibleTransformerWithForwardBlock:^id(NSArray *nodes) {
                 if (nodes == nil || nodes.count == 0) return nil;

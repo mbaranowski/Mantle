@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DDXML.h"
-#import "DDXMLNode.h"
 
+@class DDXMLNode;
+@class DDXMLElement;
 @class MTLModel;
 
 @protocol MTLXMLSerializing

@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/mbaranowski/MantleXMLAdapter"
   s.license      = "MIT"
   s.authors      = { "Matthew Baranowski" => "matt.baranowski@willowtreeapps.com" }
-  s.source       = { :git => "https://github.com/mbaranowski/MantleXMLAdapter.git", :tag => '0.2.2' }
+  s.source       = { :git => "https://github.com/mbaranowski/MantleXMLAdapter.git", :tag => '0.2.5' }
   s.source_files = 'Mantle/MTLXMLAdapter.{h,m}', 'Mantle/NSValueTransformer+MTLXMLTransformerAdditions.{h,m}'
   s.dependency  'KissXML'
   s.dependency  'Mantle'

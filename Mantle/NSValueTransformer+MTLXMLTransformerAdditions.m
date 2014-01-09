@@ -10,24 +10,24 @@
 #import "MTLModel.h"
 #import "MTLValueTransformer.h"
 #import "MTLXMLAdapter.h"
-
+#import "DDXML.h"
 
 @implementation NSValueTransformer (MTLXMLTransformerAdditions)
 
-+ (NSDateFormatter *)dateFormatter
-{
-    static NSDateFormatter* _dateFormatter;
-    if (!_dateFormatter)
-    {
-        _dateFormatter = [NSDateFormatter new];
-        [_dateFormatter setDateStyle:NSDateFormatterFullStyle];
-        [_dateFormatter setTimeStyle:NSDateFormatterFullStyle];
++ (NSDateFormatter *)dateFormatter {
+    NSMutableDictionary *dictionary = [[NSThread currentThread] threadDictionary];
+    NSDateFormatter *dateFormatter = dictionary[@"MTLDateFormatter"];
+    if (!dateFormatter) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateStyle = NSDateFormatterFullStyle;
+        dateFormatter.timeStyle = NSDateFormatterFullStyle;
+        dictionary[@"MTLDateFormatter"] = dateFormatter;
     }
-    
-    return _dateFormatter;
+
+    return dateFormatter;
 }
 
-+ (NSValueTransformer *)mtl_XMLTransformerForDateWithFormat:(NSString*)dateFormat {
++ (NSValueTransformer *)mtl_XMLTransformerForDateWithFormat:(NSString *)dateFormat {
 	return [MTLValueTransformer
             reversibleTransformerWithForwardBlock:^id(NSArray *nodes) {
                 if (nodes == nil || nodes.count == 0) return nil;
@@ -149,7 +149,7 @@
             ];
 }
 
-+ (NSValueTransformer *)mtl_XMLNonUniformObjectArrayTransformerWithModelClass:(Class)modelClass {
++ (NSValueTransformer *)mtl_XMLNonUniformObjectArrayTransformerWithModelClass:(Class<MTLXMLSerializing>)modelClass {
     
 	return [MTLValueTransformer
             reversibleTransformerWithForwardBlock:^ id (NSArray *nodes) {

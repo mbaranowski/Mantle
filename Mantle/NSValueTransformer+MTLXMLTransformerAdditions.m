@@ -16,15 +16,16 @@
 
 + (NSDateFormatter *)dateFormatter
 {
-    static NSDateFormatter *_dateFormatter;
-    if (!_dateFormatter)
-    {
-        _dateFormatter = [NSDateFormatter new];
-        [_dateFormatter setDateStyle:NSDateFormatterFullStyle];
-        [_dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+    NSMutableDictionary *dictionary = [[NSThread currentThread] threadDictionary];
+    NSDateFormatter *dateFormatter = [dictionary objectForKey:@"MTLDateFormatter"];
+    if (!dateFormatter) {
+        dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+        [dateFormatter setDateStyle:NSDateFormatterFullStyle];
+        [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+        [dictionary setObject:dateFormatter forKey:@"MTLDateFormatter"];
     }
-    
-    return _dateFormatter;
+
+    return dateFormatter;
 }
 
 + (NSValueTransformer *)mtl_XMLTransformerForDateWithFormat:(NSString *)dateFormat {
@@ -149,7 +150,7 @@
             ];
 }
 
-+ (NSValueTransformer *)mtl_XMLNonUniformObjectArrayTransformerWithModelClass:(Class)modelClass {
++ (NSValueTransformer *)mtl_XMLNonUniformObjectArrayTransformerWithModelClass:(Class<MTLXMLSerializing>)modelClass {
     
 	return [MTLValueTransformer
             reversibleTransformerWithForwardBlock:^ id (NSArray *nodes) {

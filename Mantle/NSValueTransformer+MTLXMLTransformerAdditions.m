@@ -14,15 +14,14 @@
 
 @implementation NSValueTransformer (MTLXMLTransformerAdditions)
 
-+ (NSDateFormatter *)dateFormatter
-{
++ (NSDateFormatter *)dateFormatter {
     NSMutableDictionary *dictionary = [[NSThread currentThread] threadDictionary];
-    NSDateFormatter *dateFormatter = [dictionary objectForKey:@"MTLDateFormatter"];
+    NSDateFormatter *dateFormatter = dictionary[@"MTLDateFormatter"];
     if (!dateFormatter) {
-        dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-        [dateFormatter setDateStyle:NSDateFormatterFullStyle];
-        [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-        [dictionary setObject:dateFormatter forKey:@"MTLDateFormatter"];
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateStyle = NSDateFormatterFullStyle;
+        dateFormatter.timeStyle = NSDateFormatterFullStyle;
+        dictionary[@"MTLDateFormatter"] = dateFormatter;
     }
 
     return dateFormatter;

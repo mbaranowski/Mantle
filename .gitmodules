@@ -7,6 +7,3 @@
 [submodule "MantleTests/specta"]
 	path = MantleTests/specta
 	url = git://github.com/github/specta.git
-[submodule "KissXML"]
-	path = KissXML
-url=https://github.com/mbaranowski/KissXML

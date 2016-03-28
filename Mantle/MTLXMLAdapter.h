@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DDXML.h"
-#import "DDXMLNode.h"
+#import <KissXML/DDXML.h>
+#import <KissXML/DDXMLNode.h>
 
 @class MTLModel;
 
